@@ -1,20 +1,20 @@
 package service;
 
-import org.springframework.stereotype.Service;
 import exception.ConditionsNotMetException;
 import exception.NotFoundException;
 import model.Post;
+import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 // Указываем, что класс PostService - является бином и его
 // нужно добавить в контекст приложения
 @Service
 public class PostService {
     private final Map<Long, Post> posts = new HashMap<>();
+    private final Comparator<Post> postDateComparator = Comparator.comparing(Post::getPostDate);
     private final UserService userService;
 
     // Внедряем UserService через конструктор
@@ -22,8 +22,14 @@ public class PostService {
         this.userService = userService;
     }
 
-    public Collection<Post> findAll() {
-        return posts.values();
+    public Collection<Post> findAll(SortOrder sort, int from, int size) {
+        return posts.values()
+                .stream()
+                .sorted(sort.equals(SortOrder.ASCENDING) ?
+                        postDateComparator : postDateComparator.reversed())
+                .skip(from)
+                .limit(size)
+                .toList();
     }
 
     public Post create(Post post) {
@@ -66,5 +72,9 @@ public class PostService {
                 .max()
                 .orElse(0);
         return ++currentMaxId;
+    }
+
+    public Optional<Post> findById(long postId) {
+        return Optional.ofNullable(posts.get(postId));
     }
 }
