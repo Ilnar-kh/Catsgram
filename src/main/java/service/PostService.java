@@ -5,7 +5,6 @@ import exception.NotFoundException;
 import model.Post;
 import org.springframework.stereotype.Service;
 
-import javax.swing.*;
 import java.time.Instant;
 import java.util.*;
 
@@ -22,10 +21,10 @@ public class PostService {
         this.userService = userService;
     }
 
-    public Collection<Post> findAll(SortOrder sort, int from, int size) {
+    public Collection<Post> findAll(model.SortOrder sort, int from, int size) {
         return posts.values()
                 .stream()
-                .sorted(sort.equals(SortOrder.ASCENDING) ?
+                .sorted(sort.equals(model.SortOrder.ASCENDING) ?
                         postDateComparator : postDateComparator.reversed())
                 .skip(from)
                 .limit(size)
