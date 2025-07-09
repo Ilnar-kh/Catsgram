@@ -1,42 +1,44 @@
 package application.controller;
 
-import data.ImageData;
 import lombok.RequiredArgsConstructor;
-import model.Image;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import service.ImageService;
+import application.dto.*;
+import application.service.ImageService;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/images")
 public class ImageController {
-    private final ImageService imageService;
+    private final ImageService service;
 
-    @GetMapping("/posts/{postId}/images")
-    public List<Image> getPostImages(@PathVariable("postId") long postId) {
-        return imageService.getPostImages(postId);
-    }
-
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/posts/{postId}/images")
-    public List<Image> addPostImages(@PathVariable("postId") long postId,
-                                     @RequestParam("image") List<MultipartFile> files) {
-        return imageService.saveImages(postId, files);
+    public ImageDto create(@RequestBody NewImageRequest request) {
+        return service.create(request);
     }
 
-    @GetMapping(value = "/images/{imageId}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> downloadImage(@PathVariable long imageId) {
-        ImageData imageData = imageService.getImageData(imageId);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentDisposition(
-                ContentDisposition.attachment()
-                        .filename(imageData.getName())
-                        .build()
-        );
+    @GetMapping("/post/{postId}")
+    public List<ImageDto> getByPost(@PathVariable long postId) {
+        return service.getByPost(postId);
+    }
 
-        return new ResponseEntity<>(imageData.getData(), headers, HttpStatus.OK);
+    @GetMapping("/{id}")
+    public ImageDto getById(@PathVariable long id) {
+        return service.getById(id);
+    }
+
+    @PutMapping("/{id}")
+    public ImageDto update(@PathVariable long id,
+                           @RequestBody UpdateImageRequest request) {
+        return service.update(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable long id) {
+        service.delete(id);
     }
 }

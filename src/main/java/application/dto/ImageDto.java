@@ -1,13 +1,10 @@
-package model;
+package application.dto;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.time.Instant;
 
-@EqualsAndHashCode(of = {"id"})
 @Data
-public class Image {
+public class ImageDto {
     private Long id;
     private Long postId;
     private String url;
