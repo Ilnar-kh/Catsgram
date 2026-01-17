@@ -1,15 +1,13 @@
-package model;
+package application.dto;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.Instant;
 
-@EqualsAndHashCode(of = {"id"})
 @Data
-public class Post {
+public class PostDto {
     private Long id;
-    private long authorId;
+    private Long authorId;
     private String content;
     private Instant createdDate;
 }

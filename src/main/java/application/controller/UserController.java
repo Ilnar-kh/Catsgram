@@ -1,41 +1,41 @@
 package application.controller;
 
-import model.User;
+import application.dto.NewUserRequest;
+import application.dto.UpdateUserRequest;
+import application.dto.UserDto;
+import application.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import service.UserService;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @GetMapping
-    public Collection<User> findAll() {
-        return userService.findAll();
-    }
-
-    @GetMapping("/{postId}")
-    public Optional<User> findUserById(@PathVariable long userId) {
-        return userService.findUserById(userId);
-    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User create(@RequestBody User user) {
-        return userService.create(user);
+    public UserDto createUser(@RequestBody NewUserRequest request) {
+        return userService.createUser(request);
     }
 
-    @PutMapping
-    public User update(@RequestBody User newUser) {
-        return userService.update(newUser);
+    @PutMapping("/{userId}")
+    public UserDto updateUser(@PathVariable("userId") long userId, @RequestBody UpdateUserRequest request) {
+        return userService.updateUser(userId, request);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserDto> getUsers() {
+        return userService.getUsers();
+    }
+
+    @GetMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto getUserById(@PathVariable("userId") long userId) {
+        return userService.getUserById(userId);
     }
 }

@@ -1,44 +1,51 @@
 package application.controller;
 
-import model.Post;
-import model.SortOrder;
+import application.dto.NewPostRequest;
+import application.dto.PostDto;
+import application.dto.UpdatePostRequest;
+import application.service.PostService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import service.PostService;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/posts")
 public class PostController {
-
-    private final PostService postService;
-
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
-
-    @GetMapping
-    public Collection<Post> findAll(@RequestParam(defaultValue = "desc") String sort,
-                                    @RequestParam(defaultValue = "0") int from,
-                                    @RequestParam(defaultValue = "10") int size) {
-        return postService.findAll(SortOrder.from(sort), from, size);
-    }
-
-    @GetMapping("/{postId}")
-    public Optional<Post> findById(@PathVariable long postId) {
-        return postService.findById(postId);
-    }
+    private final PostService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Post create(@RequestBody Post post) {
-        return postService.create(post);
+    public PostDto create(@RequestBody NewPostRequest request) {
+        return service.create(request);
     }
 
-    @PutMapping
-    public Post update(@RequestBody Post newPost) {
-        return postService.update(newPost);
+    @GetMapping
+    public List<PostDto> getAll() {
+        return service.getAll();
+    }
+
+    @GetMapping("/author/{authorId}")
+    public List<PostDto> getByAuthor(@PathVariable long authorId) {
+        return service.getByAuthor(authorId);
+    }
+
+    @GetMapping("/{id}")
+    public PostDto getById(@PathVariable long id) {
+        return service.getById(id);
+    }
+
+    @PutMapping("/{id}")
+    public PostDto update(@PathVariable long id,
+                          @RequestBody UpdatePostRequest request) {
+        return service.update(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable long id) {
+        service.delete(id);
     }
 }

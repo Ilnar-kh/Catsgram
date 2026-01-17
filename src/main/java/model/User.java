@@ -6,7 +6,8 @@ import lombok.EqualsAndHashCode;
 import java.time.Instant;
 
 @EqualsAndHashCode(of = {"email"})
-public @Data class User {
+@Data
+public class User {
     private Long id;
     private String username;
     private String email;
